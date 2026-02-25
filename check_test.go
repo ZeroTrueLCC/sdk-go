@@ -41,7 +41,7 @@ func TestClient_CreateCheck_Text(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{"id":"uuid-123","status":"queued"}`))
+		_, _ = w.Write([]byte(`{"id":"uuid-123","status":"queued"}`))
 	})
 
 	resp, err := c.CreateCheck(context.Background(), CheckInput{Type: "text", Value: "test text"}, nil)
@@ -71,7 +71,7 @@ func TestClient_CreateCheck_URL(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{"id":"uuid-456","status":"queued"}`))
+		_, _ = w.Write([]byte(`{"id":"uuid-456","status":"queued"}`))
 	})
 
 	resp, err := c.CreateCheck(context.Background(), CheckInput{Type: "url", Value: "https://example.com"}, nil)
@@ -121,7 +121,7 @@ func TestClient_CreateCheck_File(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{"id":"uuid-789","status":"queued"}`))
+		_, _ = w.Write([]byte(`{"id":"uuid-789","status":"queued"}`))
 	})
 
 	resp, err := c.CreateCheck(context.Background(), CheckInput{Type: "file", FilePath: fpath}, nil)
@@ -145,7 +145,7 @@ func TestClient_CreateCheck_WithIdempotencyKey(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{"id":"uuid-idem","status":"queued"}`))
+		_, _ = w.Write([]byte(`{"id":"uuid-idem","status":"queued"}`))
 	})
 
 	opts := &CheckOptions{IdempotencyKey: "my-key-123"}
@@ -173,7 +173,7 @@ func TestClient_CreateCheck_DefaultOptions(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{"id":"uuid-def","status":"queued"}`))
+		_, _ = w.Write([]byte(`{"id":"uuid-def","status":"queued"}`))
 	})
 
 	resp, err := c.CreateCheck(context.Background(), CheckInput{Type: "text", Value: "defaults"}, nil)
@@ -192,7 +192,7 @@ func TestClient_GetCheck_Completed(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{
+		_, _ = w.Write([]byte(`{
 			"id": "uuid-completed",
 			"status": "completed",
 			"result": {
@@ -240,7 +240,7 @@ func TestClient_GetCheck_Processing(t *testing.T) {
 	c := testClient(t, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"id":"uuid-proc","status":"processing","result":{"status":"processing","created_at":"2025-01-01T00:00:00Z","ai_probability":0,"human_probability":0,"combined_probability":0,"result_type":"","ml_model":""}}`))
+		_, _ = w.Write([]byte(`{"id":"uuid-proc","status":"processing","result":{"status":"processing","created_at":"2025-01-01T00:00:00Z","ai_probability":0,"human_probability":0,"combined_probability":0,"result_type":"","ml_model":""}}`))
 	})
 
 	result, err := c.GetCheck(context.Background(), "uuid-proc")
@@ -262,7 +262,7 @@ func TestClient_GetCheck_TrailingSlash(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"id":"check-id-1","status":"completed"}`))
+		_, _ = w.Write([]byte(`{"id":"check-id-1","status":"completed"}`))
 	}))
 	t.Cleanup(srv.Close)
 

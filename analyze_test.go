@@ -39,7 +39,7 @@ func analyzeHandler(t *testing.T, wantField, wantValue string) http.HandlerFunc 
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(analyzeSuccessJSON))
+		_, _ = w.Write([]byte(analyzeSuccessJSON))
 	}
 }
 
@@ -68,7 +68,7 @@ func TestClient_AnalyzeFile_Success(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer os.Remove(tmpFile.Name())
-	tmpFile.WriteString("sample file content")
+	_, _ = tmpFile.WriteString("sample file content")
 	tmpFile.Close()
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +92,7 @@ func TestClient_AnalyzeFile_Success(t *testing.T) {
 			t.Errorf("is_private_scan = %q, want true", got)
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(analyzeSuccessJSON))
+		_, _ = w.Write([]byte(analyzeSuccessJSON))
 	}))
 	defer srv.Close()
 
@@ -169,7 +169,7 @@ func TestClient_Analyze_Options(t *testing.T) {
 			t.Errorf("is_private_scan = %q, want false", got)
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(analyzeSuccessJSON))
+		_, _ = w.Write([]byte(analyzeSuccessJSON))
 	}))
 	defer srv.Close()
 
@@ -196,7 +196,7 @@ func TestClient_Analyze_DefaultOptions(t *testing.T) {
 			t.Errorf("is_private_scan = %q, want true", got)
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(analyzeSuccessJSON))
+		_, _ = w.Write([]byte(analyzeSuccessJSON))
 	}))
 	defer srv.Close()
 
@@ -222,7 +222,7 @@ func TestClient_Analyze_NoAuthHeader(t *testing.T) {
 			t.Errorf("api_key form field = %q, want %q", got, testAPIKey)
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(analyzeSuccessJSON))
+		_, _ = w.Write([]byte(analyzeSuccessJSON))
 	}))
 	defer srv.Close()
 

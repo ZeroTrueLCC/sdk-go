@@ -39,7 +39,7 @@ func TestClient_WaitForResult_Success(t *testing.T) {
 			"status":               "completed",
 		}
 		data, _ := json.Marshal(msg)
-		conn.WriteMessage(websocket.TextMessage, data)
+		_ = conn.WriteMessage(websocket.TextMessage, data)
 	})
 
 	client, err := NewClient("zt_testkey", WithBaseURL(server.URL))
@@ -88,7 +88,7 @@ func TestClient_WaitForResult_FieldRemapping(t *testing.T) {
 			"content_item_price":             1,
 		}
 		data, _ := json.Marshal(msg)
-		conn.WriteMessage(websocket.TextMessage, data)
+		_ = conn.WriteMessage(websocket.TextMessage, data)
 	})
 
 	client, err := NewClient("zt_testkey", WithBaseURL(server.URL))

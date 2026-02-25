@@ -125,7 +125,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body io.Rea
 
 		if resp.StatusCode >= 400 {
 			if shouldRetry(resp.StatusCode) && attempt < maxAttempts-1 {
-				io.Copy(io.Discard, resp.Body)
+				_, _ = io.Copy(io.Discard, resp.Body)
 				resp.Body.Close()
 
 				wait := backoff(attempt, c.retryWaitMin, c.retryWaitMax)

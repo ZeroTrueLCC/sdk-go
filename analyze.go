@@ -124,7 +124,7 @@ func (c *Client) doMultipartAnalyze(ctx context.Context, path string, buildForm 
 
 		if resp.StatusCode >= 400 {
 			if shouldRetry(resp.StatusCode) && attempt < maxAttempts-1 {
-				io.Copy(io.Discard, resp.Body)
+				_, _ = io.Copy(io.Discard, resp.Body)
 				resp.Body.Close()
 
 				wait := backoff(attempt, c.retryWaitMin, c.retryWaitMax)

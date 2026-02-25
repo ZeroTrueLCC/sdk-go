@@ -1,6 +1,7 @@
 package zerotrue
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -85,28 +86,60 @@ func NewClient(apiKey string, opts ...Option) (*Client, error) {
 	return c, nil
 }
 
-// doRequest executes an HTTP request against the API.
+// doRequest executes an HTTP request against the API with retry logic.
 func (c *Client) doRequest(ctx context.Context, method, path string, body io.Reader, contentType string) (*http.Response, error) {
 	url := c.baseURL + path
 
-	req, err := http.NewRequestWithContext(ctx, method, url, body)
-	if err != nil {
-		return nil, err
+	// Read body once so it can be replayed on retries.
+	var bodyBytes []byte
+	if body != nil {
+		var err error
+		bodyBytes, err = io.ReadAll(body)
+		if err != nil {
+			return nil, fmt.Errorf("reading request body: %w", err)
+		}
 	}
 
-	req.Header.Set("Authorization", "Bearer "+c.apiKey)
-	if contentType != "" {
-		req.Header.Set("Content-Type", contentType)
+	maxAttempts := c.maxRetries + 1
+	for attempt := 0; attempt < maxAttempts; attempt++ {
+		var reqBody io.Reader
+		if bodyBytes != nil {
+			reqBody = bytes.NewReader(bodyBytes)
+		}
+
+		req, err := http.NewRequestWithContext(ctx, method, url, reqBody)
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Authorization", "Bearer "+c.apiKey)
+		if contentType != "" {
+			req.Header.Set("Content-Type", contentType)
+		}
+
+		resp, err := c.httpClient.Do(req)
+		if err != nil {
+			return nil, err
+		}
+
+		if resp.StatusCode >= 400 {
+			if shouldRetry(resp.StatusCode) && attempt < maxAttempts-1 {
+				io.Copy(io.Discard, resp.Body)
+				resp.Body.Close()
+
+				wait := backoff(attempt, c.retryWaitMin, c.retryWaitMax)
+				select {
+				case <-time.After(wait):
+				case <-ctx.Done():
+					return nil, ctx.Err()
+				}
+				continue
+			}
+			return nil, parseErrorResponse(resp)
+		}
+
+		return resp, nil
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode >= 400 {
-		return nil, parseErrorResponse(resp)
-	}
-
-	return resp, nil
+	return nil, fmt.Errorf("zerotrue: request failed after %d attempts", maxAttempts)
 }

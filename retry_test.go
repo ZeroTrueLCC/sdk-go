@@ -78,11 +78,11 @@ func TestClient_DoRequest_RetryOnServerError(t *testing.T) {
 		if n <= 2 {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(`{"error":{"code":"INTERNAL","message":"server error"}}`))
+			_, _ = w.Write([]byte(`{"error":{"code":"INTERNAL","message":"server error"}}`))
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"ok":true}`))
+		_, _ = w.Write([]byte(`{"ok":true}`))
 	}))
 	t.Cleanup(srv.Close)
 
@@ -113,7 +113,7 @@ func TestClient_DoRequest_RetryExhausted(t *testing.T) {
 		counter.Add(1)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(`{"error":{"code":"INTERNAL","message":"server error"}}`))
+		_, _ = w.Write([]byte(`{"error":{"code":"INTERNAL","message":"server error"}}`))
 	}))
 	t.Cleanup(srv.Close)
 
@@ -148,7 +148,7 @@ func TestClient_DoRequest_NoRetryOn4xx(t *testing.T) {
 		counter.Add(1)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(`{"error":{"code":"BAD_REQUEST","message":"bad request"}}`))
+		_, _ = w.Write([]byte(`{"error":{"code":"BAD_REQUEST","message":"bad request"}}`))
 	}))
 	t.Cleanup(srv.Close)
 

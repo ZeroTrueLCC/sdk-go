@@ -13,7 +13,7 @@ func TestClient_GetResult_Success(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"id":"uuid-123","status":"completed","data":{"ai_probability":0.9,"human_probability":0.1,"combined_probability":0.9,"result_type":"text_analysis","ml_model":"model1"}}`))
+		_, _ = w.Write([]byte(`{"id":"uuid-123","status":"completed","data":{"ai_probability":0.9,"human_probability":0.1,"combined_probability":0.9,"result_type":"text_analysis","ml_model":"model1"}}`))
 	})
 	srv := httptest.NewServer(handler)
 	t.Cleanup(srv.Close)
@@ -39,7 +39,7 @@ func TestClient_GetResult_NotFound(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"error":{"code":"NOT_FOUND","message":"not found"},"request_id":"req_1"}`))
+		_, _ = w.Write([]byte(`{"error":{"code":"NOT_FOUND","message":"not found"},"request_id":"req_1"}`))
 	})
 	srv := httptest.NewServer(handler)
 	t.Cleanup(srv.Close)
@@ -70,7 +70,7 @@ func TestClient_GetResult_APIKeyInQuery(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"id":"uuid-123","status":"completed","data":{"ai_probability":0.5,"human_probability":0.5,"combined_probability":0.5,"result_type":"text_analysis","ml_model":"m"}}`))
+		_, _ = w.Write([]byte(`{"id":"uuid-123","status":"completed","data":{"ai_probability":0.5,"human_probability":0.5,"combined_probability":0.5,"result_type":"text_analysis","ml_model":"m"}}`))
 	})
 	srv := httptest.NewServer(handler)
 	t.Cleanup(srv.Close)

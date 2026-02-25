@@ -29,7 +29,7 @@ func TestClient_GetInfo_Success(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{
+		_, _ = w.Write([]byte(`{
 			"name": "ZeroTrue API",
 			"version": "1.2.3",
 			"description": "AI content detection API",
@@ -82,7 +82,7 @@ func TestClient_GetInfo_ServerError(t *testing.T) {
 	c := testClient(t, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(`{"error":{"code":"INTERNAL","message":"server error"},"request_id":"req_1"}`))
+		_, _ = w.Write([]byte(`{"error":{"code":"INTERNAL","message":"server error"},"request_id":"req_1"}`))
 	})
 
 	_, err := c.GetInfo(context.Background())

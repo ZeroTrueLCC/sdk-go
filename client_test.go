@@ -106,7 +106,7 @@ func TestNewClient_EmptyAPIKey(t *testing.T) {
 func TestClient_DoRequest_Success(t *testing.T) {
 	c, _ := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"ok":true}`))
+		_, _ = w.Write([]byte(`{"ok":true}`))
 	})
 
 	resp, err := c.doRequest(context.Background(), http.MethodGet, "/v1/test", nil, "")
@@ -161,7 +161,7 @@ func TestClient_DoRequest_ErrorResponse(t *testing.T) {
 	c, _ := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(`{"error":{"code":"UNAUTHORIZED","message":"Invalid API key"},"request_id":"req_123"}`))
+		_, _ = w.Write([]byte(`{"error":{"code":"UNAUTHORIZED","message":"Invalid API key"},"request_id":"req_123"}`))
 	})
 
 	_, err := c.doRequest(context.Background(), http.MethodGet, "/v1/secure", nil, "")

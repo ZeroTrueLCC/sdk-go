@@ -48,8 +48,8 @@ func TestNewClient_Defaults(t *testing.T) {
 	if c.apiKey != testAPIKey {
 		t.Errorf("apiKey = %q, want %q", c.apiKey, testAPIKey)
 	}
-	if c.baseURL != "" {
-		t.Errorf("baseURL = %q, want empty", c.baseURL)
+	if c.baseURL != "https://api.zerotrue.app" {
+		t.Errorf("baseURL = %q, want %q", c.baseURL, "https://api.zerotrue.app")
 	}
 }
 

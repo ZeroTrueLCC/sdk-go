@@ -73,6 +73,7 @@ func NewClient(apiKey string, opts ...Option) (*Client, error) {
 
 	c := &Client{
 		apiKey:       apiKey,
+		baseURL:      "https://api.zerotrue.app",
 		httpClient:   &http.Client{Timeout: 5 * time.Minute},
 		maxRetries:   3,
 		retryWaitMin: 1 * time.Second,

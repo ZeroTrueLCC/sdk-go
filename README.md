@@ -1,6 +1,6 @@
 # ZeroTrue Go SDK
 
-Go SDK for the [ZeroTrue API](https://zerotrue.com) — AI-generated content detection service.
+Go SDK for the [ZeroTrue API](https://zerotrue.com). AI-generated content detection service.
 
 ## Installation
 
@@ -41,12 +41,12 @@ func main() {
 
 ## Features
 
-- **Sync Analysis** — `AnalyzeFile`, `AnalyzeText`, `AnalyzeURL` via API Gateway
-- **Async Flow** — `CreateCheck` + `GetCheck` with polling
-- **WebSocket** — `WaitForResult` for real-time results
-- **Typed Errors** — `AuthenticationError`, `RateLimitError`, `InsufficientCreditsError`, etc.
-- **Retry Logic** — Automatic retry with exponential backoff for 5xx and 429 errors
-- **Functional Options** — Flexible client configuration
+- **Sync Analysis**: `AnalyzeFile`, `AnalyzeText`, `AnalyzeURL` via API Gateway
+- **Async Flow**: `CreateCheck` + `GetCheck` with polling
+- **WebSocket**: `WaitForResult` for real-time results
+- **Typed Errors**: `AuthenticationError`, `RateLimitError`, `InsufficientCreditsError`, etc.
+- **Retry Logic**: Automatic retry with exponential backoff for 5xx and 429 errors
+- **Functional Options**: Flexible client configuration
 
 ## Client Options
 

@@ -10,7 +10,7 @@ import (
 type resultResponse struct {
 	ID     string          `json:"id"`
 	Status string          `json:"status"`
-	Data   *AnalysisResult `json:"data"`
+	Result *AnalysisResult `json:"result"`
 }
 
 // GetResult retrieves a previously computed analysis result by content ID.
@@ -42,9 +42,9 @@ func (c *Client) GetResult(ctx context.Context, contentID string) (*AnalysisResu
 		return nil, fmt.Errorf("zerotrue: failed to decode response: %w", err)
 	}
 
-	if result.Data == nil {
-		return nil, fmt.Errorf("zerotrue: empty data in response")
+	if result.Result == nil {
+		return nil, fmt.Errorf("zerotrue: empty result in response")
 	}
 
-	return result.Data, nil
+	return result.Result, nil
 }

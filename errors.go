@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 // APIError is the base error type for all API errors.
@@ -69,7 +70,8 @@ func newAPIError(statusCode int, code, message, requestID string) error {
 	case 429:
 		return &RateLimitError{base}
 	case 400:
-		if code == "INSUFFICIENT_CREDITS" || code == "INSUFFICIENT_PAID_CREDITS" {
+		lowerMsg := strings.ToLower(message)
+		if strings.Contains(lowerMsg, "insufficient") && strings.Contains(lowerMsg, "credits") {
 			return &InsufficientCreditsError{base}
 		}
 		return base

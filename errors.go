@@ -71,7 +71,8 @@ func newAPIError(statusCode int, code, message, requestID string) error {
 		return &RateLimitError{base}
 	case 400:
 		lowerMsg := strings.ToLower(message)
-		if strings.Contains(lowerMsg, "insufficient") && strings.Contains(lowerMsg, "credits") {
+		if code == "INSUFFICIENT_CREDITS" || code == "INSUFFICIENT_PAID_CREDITS" ||
+			(strings.Contains(lowerMsg, "insufficient") && strings.Contains(lowerMsg, "credits")) {
 			return &InsufficientCreditsError{base}
 		}
 		return base

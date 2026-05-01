@@ -36,16 +36,15 @@ func TestAnalysisResult_JSON_RoundTrip(t *testing.T) {
 		MetaSHA256:         ptr("abc123"),
 		MetaContentURL:     ptr("https://example.com/content"),
 		MetaContentType:    ptr("image"),
-		DetailsSummary: &DetailsSummary{
-			OverallAssessment: "likely AI",
-			ProcessingTimeS:   1.5,
-			GenTechnique:      "diffusion",
+		DetailsSummary: map[string]any{
+			"overall_assessment":   "likely AI",
+			"confidence_pct":       99.9,
+			"ai_probability_pct":   85.0,
+			"human_probability_pct": 15.0,
 		},
 		DetailsExtra:    map[string]any{"extra": "data"},
-		SuspectedModels: []SuspectedModel{{ModelName: "DALL-E", ConfidencePct: 75.5}},
-		Segments:        []Segment{{Label: "ai", ConfidencePct: 90.0, StartChar: ptr(0), EndChar: ptr(100)}},
-		PreviewURL:      ptr("https://example.com/preview.png"),
-		ViewsCount:      ptr(42),
+		SuspectedModels: []SuspectedModel{{ModelName: "DALL-E", ConfidencePct: ptr(75.5)}},
+		Segments:        []Segment{{Label: ptr("ai"), ConfidencePct: ptr(90.0), StartChar: ptr(0), EndChar: ptr(100)}},
 	}
 
 	data, err := json.Marshal(original)
@@ -79,20 +78,14 @@ func TestAnalysisResult_JSON_RoundTrip(t *testing.T) {
 	if decoded.DetailsSummary == nil {
 		t.Fatal("DetailsSummary is nil")
 	}
-	if decoded.DetailsSummary.OverallAssessment != "likely AI" {
-		t.Errorf("OverallAssessment: got %v", decoded.DetailsSummary.OverallAssessment)
+	if decoded.DetailsSummary["overall_assessment"] != "likely AI" {
+		t.Errorf("DetailsSummary[overall_assessment]: got %v", decoded.DetailsSummary["overall_assessment"])
 	}
 	if len(decoded.SuspectedModels) != 1 || decoded.SuspectedModels[0].ModelName != "DALL-E" {
 		t.Errorf("SuspectedModels: got %v", decoded.SuspectedModels)
 	}
-	if len(decoded.Segments) != 1 || decoded.Segments[0].Label != "ai" {
+	if len(decoded.Segments) != 1 || decoded.Segments[0].Label == nil || *decoded.Segments[0].Label != "ai" {
 		t.Errorf("Segments: got %v", decoded.Segments)
-	}
-	if decoded.ViewsCount == nil || *decoded.ViewsCount != 42 {
-		t.Errorf("ViewsCount: got %v, want 42", decoded.ViewsCount)
-	}
-	if decoded.PreviewURL == nil || *decoded.PreviewURL != "https://example.com/preview.png" {
-		t.Errorf("PreviewURL: got %v", decoded.PreviewURL)
 	}
 
 	// Verify snake_case JSON keys
@@ -110,7 +103,6 @@ func TestAnalysisResult_JSON_RoundTrip(t *testing.T) {
 		"meta_mime", "meta_file_size_bytes", "meta_sha256",
 		"meta_content_url", "meta_content_type", "details_summary",
 		"details_extra", "suspected_models", "segments",
-		"preview_url", "views_count",
 	}
 	for _, key := range expectedKeys {
 		if _, ok := raw[key]; !ok {
@@ -146,7 +138,7 @@ func TestAnalysisResult_JSON_Nullable(t *testing.T) {
 		"inference_time_ms", "api_schema_version", "meta_mime",
 		"meta_file_size_bytes", "meta_sha256", "meta_content_url",
 		"meta_content_type", "details_summary", "details_extra",
-		"suspected_models", "segments", "preview_url", "views_count",
+		"suspected_models", "segments",
 	}
 	for _, key := range omittedKeys {
 		if _, ok := raw[key]; ok {
@@ -170,8 +162,8 @@ func TestSuspectedModel_JSON(t *testing.T) {
 		name  string
 		model SuspectedModel
 	}{
-		{"basic", SuspectedModel{ModelName: "GPT-4", ConfidencePct: 92.3}},
-		{"zero confidence", SuspectedModel{ModelName: "Unknown", ConfidencePct: 0}},
+		{"basic", SuspectedModel{ModelName: "GPT-4", ConfidencePct: ptr(92.3)}},
+		{"nil confidence", SuspectedModel{ModelName: "Unknown"}},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -186,8 +178,12 @@ func TestSuspectedModel_JSON(t *testing.T) {
 			if decoded.ModelName != tc.model.ModelName {
 				t.Errorf("ModelName: got %q, want %q", decoded.ModelName, tc.model.ModelName)
 			}
-			if decoded.ConfidencePct != tc.model.ConfidencePct {
-				t.Errorf("ConfidencePct: got %v, want %v", decoded.ConfidencePct, tc.model.ConfidencePct)
+			if tc.model.ConfidencePct != nil {
+				if decoded.ConfidencePct == nil || *decoded.ConfidencePct != *tc.model.ConfidencePct {
+					t.Errorf("ConfidencePct: got %v, want %v", decoded.ConfidencePct, tc.model.ConfidencePct)
+				}
+			} else if decoded.ConfidencePct != nil {
+				t.Errorf("ConfidencePct: expected nil, got %v", *decoded.ConfidencePct)
 			}
 
 			var raw map[string]any
@@ -196,9 +192,6 @@ func TestSuspectedModel_JSON(t *testing.T) {
 			}
 			if _, ok := raw["model_name"]; !ok {
 				t.Error("missing JSON key model_name")
-			}
-			if _, ok := raw["confidence_pct"]; !ok {
-				t.Error("missing JSON key confidence_pct")
 			}
 		})
 	}
@@ -212,7 +205,7 @@ func TestSegment_JSON(t *testing.T) {
 		{
 			"text segment",
 			Segment{
-				Label: "ai", ConfidencePct: 88.0,
+				Label: ptr("ai"), ConfidencePct: ptr(88.0),
 				StartChar: ptr(0), EndChar: ptr(500),
 				StartLine: ptr(1), EndLine: ptr(10),
 			},
@@ -220,14 +213,14 @@ func TestSegment_JSON(t *testing.T) {
 		{
 			"audio segment",
 			Segment{
-				Label: "human", ConfidencePct: 95.0,
+				Label: ptr("human"), ConfidencePct: ptr(95.0),
 				StartS: ptr(0.0), EndS: ptr(30.5),
 				Timecode: ptr("00:00:00-00:00:30"),
 			},
 		},
 		{
 			"minimal segment",
-			Segment{Label: "mixed", ConfidencePct: 50.0},
+			Segment{Label: ptr("mixed"), ConfidencePct: ptr(50.0)},
 		},
 	}
 	for _, tc := range tests {
@@ -240,10 +233,10 @@ func TestSegment_JSON(t *testing.T) {
 			if err := json.Unmarshal(data, &decoded); err != nil {
 				t.Fatalf("unmarshal: %v", err)
 			}
-			if decoded.Label != tc.segment.Label {
-				t.Errorf("Label: got %q, want %q", decoded.Label, tc.segment.Label)
+			if decoded.Label == nil || tc.segment.Label == nil || *decoded.Label != *tc.segment.Label {
+				t.Errorf("Label: got %v, want %v", decoded.Label, tc.segment.Label)
 			}
-			if decoded.ConfidencePct != tc.segment.ConfidencePct {
+			if decoded.ConfidencePct == nil || tc.segment.ConfidencePct == nil || *decoded.ConfidencePct != *tc.segment.ConfidencePct {
 				t.Errorf("ConfidencePct: got %v, want %v", decoded.ConfidencePct, tc.segment.ConfidencePct)
 			}
 

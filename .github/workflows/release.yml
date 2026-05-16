@@ -50,6 +50,6 @@ jobs:
 
             ## Installation
             ```bash
-            go get github.com/zerotruelcc/sdk-go@${{ github.ref_name }}
+            go get github.com/ZeroTrueLCC/sdk-go@${{ github.ref_name }}
             ```
           generate_release_notes: true

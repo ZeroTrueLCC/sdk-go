@@ -13,12 +13,25 @@ import (
 
 const testAPIKey = "zt_testkey1234567890abcdef12345678"
 
+// setTestAPIBaseURL targets mock HTTP/WS servers during tests only (not used in production).
+func setTestAPIBaseURL(t *testing.T, url string) {
+	t.Helper()
+	prev := testAPIBaseURL
+	if url == "" {
+		testAPIBaseURL = ""
+	} else {
+		testAPIBaseURL = strings.TrimRight(url, "/")
+	}
+	t.Cleanup(func() { testAPIBaseURL = prev })
+}
+
 // newTestClient starts an httptest server and returns a Client configured to use it.
 func newTestClient(t *testing.T, handler http.HandlerFunc) (*Client, *httptest.Server) {
 	t.Helper()
 	srv := httptest.NewServer(handler)
 	t.Cleanup(srv.Close)
-	c, err := NewClient(testAPIKey, WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, err := NewClient(testAPIKey)
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}
@@ -26,6 +39,7 @@ func newTestClient(t *testing.T, handler http.HandlerFunc) (*Client, *httptest.S
 }
 
 func TestNewClient_Defaults(t *testing.T) {
+	setTestAPIBaseURL(t, "")
 	c, err := NewClient(testAPIKey)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -54,9 +68,9 @@ func TestNewClient_Defaults(t *testing.T) {
 }
 
 func TestNewClient_WithOptions(t *testing.T) {
+	setTestAPIBaseURL(t, "https://example.com/api/")
 	customHTTP := &http.Client{Timeout: 10 * time.Second}
 	c, err := NewClient(testAPIKey,
-		WithBaseURL("https://example.com/api/"),
 		WithHTTPClient(customHTTP),
 		WithTimeout(42*time.Second),
 		WithMaxRetries(5),

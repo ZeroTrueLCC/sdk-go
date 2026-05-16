@@ -86,8 +86,8 @@ func TestClient_DoRequest_RetryOnServerError(t *testing.T) {
 	}))
 	t.Cleanup(srv.Close)
 
+	setTestAPIBaseURL(t, srv.URL)
 	c, err := NewClient(testAPIKey,
-		WithBaseURL(srv.URL),
 		WithMaxRetries(3),
 		WithRetryWaitMin(1*time.Millisecond),
 		WithRetryWaitMax(10*time.Millisecond),
@@ -117,8 +117,8 @@ func TestClient_DoRequest_RetryExhausted(t *testing.T) {
 	}))
 	t.Cleanup(srv.Close)
 
+	setTestAPIBaseURL(t, srv.URL)
 	c, err := NewClient(testAPIKey,
-		WithBaseURL(srv.URL),
 		WithMaxRetries(2),
 		WithRetryWaitMin(1*time.Millisecond),
 		WithRetryWaitMax(10*time.Millisecond),
@@ -152,8 +152,8 @@ func TestClient_DoRequest_NoRetryOn4xx(t *testing.T) {
 	}))
 	t.Cleanup(srv.Close)
 
+	setTestAPIBaseURL(t, srv.URL)
 	c, err := NewClient(testAPIKey,
-		WithBaseURL(srv.URL),
 		WithMaxRetries(3),
 		WithRetryWaitMin(1*time.Millisecond),
 		WithRetryWaitMax(10*time.Millisecond),

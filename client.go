@@ -23,13 +23,6 @@ type Client struct {
 // Option configures a Client.
 type Option func(*Client)
 
-// WithBaseURL sets the API base URL, stripping any trailing slash.
-func WithBaseURL(url string) Option {
-	return func(c *Client) {
-		c.baseURL = strings.TrimRight(url, "/")
-	}
-}
-
 // WithHTTPClient sets a custom HTTP client.
 func WithHTTPClient(client *http.Client) Option {
 	return func(c *Client) {
@@ -73,7 +66,7 @@ func NewClient(apiKey string, opts ...Option) (*Client, error) {
 
 	c := &Client{
 		apiKey:       apiKey,
-		baseURL:      "https://api.zerotrue.app",
+		baseURL:      effectiveAPIBaseURL(),
 		httpClient:   &http.Client{Timeout: 5 * time.Minute},
 		maxRetries:   3,
 		retryWaitMin: 1 * time.Second,

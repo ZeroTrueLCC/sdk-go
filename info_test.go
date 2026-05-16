@@ -12,7 +12,8 @@ func testClient(t *testing.T, handler http.HandlerFunc) *Client {
 	t.Helper()
 	srv := httptest.NewServer(handler)
 	t.Cleanup(srv.Close)
-	c, err := NewClient("zt_testkey1234567890abcdef12345678", WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, err := NewClient("zt_testkey1234567890abcdef12345678")
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}

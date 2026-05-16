@@ -18,7 +18,8 @@ func TestClient_GetResult_Success(t *testing.T) {
 	srv := httptest.NewServer(handler)
 	t.Cleanup(srv.Close)
 
-	c, err := NewClient(testAPIKey, WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, err := NewClient(testAPIKey)
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}
@@ -44,7 +45,8 @@ func TestClient_GetResult_NotFound(t *testing.T) {
 	srv := httptest.NewServer(handler)
 	t.Cleanup(srv.Close)
 
-	c, err := NewClient(testAPIKey, WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, err := NewClient(testAPIKey)
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}
@@ -75,7 +77,8 @@ func TestClient_GetResult_APIKeyInQuery(t *testing.T) {
 	srv := httptest.NewServer(handler)
 	t.Cleanup(srv.Close)
 
-	c, err := NewClient(testAPIKey, WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, err := NewClient(testAPIKey)
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}

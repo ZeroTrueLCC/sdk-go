@@ -42,7 +42,8 @@ func TestClient_WaitForResult_Success(t *testing.T) {
 		_ = conn.WriteMessage(websocket.TextMessage, data)
 	})
 
-	client, err := NewClient("zt_testkey", WithBaseURL(server.URL))
+	setTestAPIBaseURL(t, server.URL)
+	client, err := NewClient("zt_testkey")
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}
@@ -91,7 +92,8 @@ func TestClient_WaitForResult_FieldRemapping(t *testing.T) {
 		_ = conn.WriteMessage(websocket.TextMessage, data)
 	})
 
-	client, err := NewClient("zt_testkey", WithBaseURL(server.URL))
+	setTestAPIBaseURL(t, server.URL)
+	client, err := NewClient("zt_testkey")
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}
@@ -124,7 +126,8 @@ func TestClient_WaitForResult_ContextCancel(t *testing.T) {
 		time.Sleep(10 * time.Second)
 	})
 
-	client, err := NewClient("zt_testkey", WithBaseURL(server.URL))
+	setTestAPIBaseURL(t, server.URL)
+	client, err := NewClient("zt_testkey")
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}

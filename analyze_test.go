@@ -96,7 +96,8 @@ func TestClient_AnalyzeFile_Success(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c, _ := NewClient(testAPIKey, WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, _ := NewClient(testAPIKey)
 	res, err := c.AnalyzeFile(context.Background(), tmpFile.Name(), nil)
 	if err != nil {
 		t.Fatalf("AnalyzeFile error: %v", err)
@@ -105,7 +106,8 @@ func TestClient_AnalyzeFile_Success(t *testing.T) {
 }
 
 func TestClient_AnalyzeFile_FileNotFound(t *testing.T) {
-	c, _ := NewClient(testAPIKey, WithBaseURL("http://localhost"))
+	setTestAPIBaseURL(t, "")
+	c, _ := NewClient(testAPIKey)
 	_, err := c.AnalyzeFile(context.Background(), "/nonexistent/path/file.txt", nil)
 	if err == nil {
 		t.Fatal("expected error for nonexistent file")
@@ -173,7 +175,8 @@ func TestClient_Analyze_Options(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c, _ := NewClient(testAPIKey, WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, _ := NewClient(testAPIKey)
 	opts := &AnalyzeOptions{IsDeepScan: true, IsPrivateScan: false}
 	res, err := c.AnalyzeText(context.Background(), "test text", opts)
 	if err != nil {
@@ -200,7 +203,8 @@ func TestClient_Analyze_DefaultOptions(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c, _ := NewClient(testAPIKey, WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, _ := NewClient(testAPIKey)
 	res, err := c.AnalyzeText(context.Background(), "test text", nil)
 	if err != nil {
 		t.Fatalf("AnalyzeText error: %v", err)
@@ -226,7 +230,8 @@ func TestClient_Analyze_NoAuthHeader(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c, _ := NewClient(testAPIKey, WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, _ := NewClient(testAPIKey)
 	_, err := c.AnalyzeText(context.Background(), "check no auth", nil)
 	if err != nil {
 		t.Fatalf("AnalyzeText error: %v", err)

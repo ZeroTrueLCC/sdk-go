@@ -266,7 +266,8 @@ func TestClient_GetCheck_TrailingSlash(t *testing.T) {
 	}))
 	t.Cleanup(srv.Close)
 
-	c, err := NewClient("zt_testkey1234567890abcdef12345678", WithBaseURL(srv.URL))
+	setTestAPIBaseURL(t, srv.URL)
+	c, err := NewClient("zt_testkey1234567890abcdef12345678")
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}

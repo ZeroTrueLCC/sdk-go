@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"log"
 
-	zerotrue "github.com/zerotrue/sdk-go"
+	zerotrue "github.com/ZeroTrueLCC/sdk-go"
 )
 
 func ExampleNewClient() {
 	client, err := zerotrue.NewClient("zt_your_api_key_here",
-		zerotrue.WithBaseURL("https://api.zerotrue.com"),
 		zerotrue.WithMaxRetries(3),
 	)
 	if err != nil {
@@ -22,9 +21,7 @@ func ExampleNewClient() {
 }
 
 func ExampleClient_AnalyzeText() {
-	client, err := zerotrue.NewClient("zt_your_api_key_here",
-		zerotrue.WithBaseURL("https://api.zerotrue.com"),
-	)
+	client, err := zerotrue.NewClient("zt_your_api_key_here")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,9 +41,7 @@ func ExampleClient_AnalyzeText() {
 }
 
 func ExampleClient_AnalyzeFile() {
-	client, err := zerotrue.NewClient("zt_your_api_key_here",
-		zerotrue.WithBaseURL("https://api.zerotrue.com"),
-	)
+	client, err := zerotrue.NewClient("zt_your_api_key_here")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,9 +55,7 @@ func ExampleClient_AnalyzeFile() {
 }
 
 func ExampleClient_CreateCheck() {
-	client, err := zerotrue.NewClient("zt_your_api_key_here",
-		zerotrue.WithBaseURL("https://api.zerotrue.com"),
-	)
+	client, err := zerotrue.NewClient("zt_your_api_key_here")
 	if err != nil {
 		log.Fatal(err)
 	}

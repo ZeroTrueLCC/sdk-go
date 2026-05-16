@@ -1,4 +1,4 @@
-module github.com/zerotrue/sdk-go
+module github.com/ZeroTrueLCC/sdk-go
 
 go 1.21
 

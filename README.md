@@ -5,7 +5,7 @@ Go SDK for the [ZeroTrue API](https://zerotrue.com). AI-generated content detect
 ## Installation
 
 ```bash
-go get github.com/zerotrue/sdk-go
+go get github.com/ZeroTrueLCC/sdk-go
 ```
 
 ## Quick Start
@@ -18,13 +18,11 @@ import (
     "fmt"
     "log"
 
-    zerotrue "github.com/zerotrue/sdk-go"
+	zerotrue "github.com/ZeroTrueLCC/sdk-go"
 )
 
 func main() {
-    client, err := zerotrue.NewClient("zt_your_api_key",
-        zerotrue.WithBaseURL("https://api.zerotrue.com"),
-    )
+    client, err := zerotrue.NewClient("zt_your_api_key")
     if err != nil {
         log.Fatal(err)
     }
@@ -52,7 +50,6 @@ func main() {
 
 ```go
 client, _ := zerotrue.NewClient("zt_your_api_key",
-    zerotrue.WithBaseURL("https://api.zerotrue.com"),
     zerotrue.WithTimeout(2 * time.Minute),
     zerotrue.WithMaxRetries(5),
     zerotrue.WithRetryWaitMin(500 * time.Millisecond),
